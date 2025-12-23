@@ -77,7 +77,7 @@ Projeyi kendi bilgisayarınızda sıfırdan kurmak için aşağıdaki adımları
 Terminali açın ve projeyi bilgisayarınıza indirin:
 
 ````bash
-git clone [https://github.com/T4pio/Solu_library.git](https://github.com/T4pio/Solu_library.git
+git clone [https://github.com/T4pio/Solu_library.git](https://github.com/T4pio/Solu_library.git)
 cd SOLU-Library
 
 ### 3. Veritabanı Kurulumu (H2 Database)
@@ -117,4 +117,5 @@ SCREENSHOTS KLASÖRÜNDEN PROJENİN UI GÖRÜNTÜLERİNİ GÖREBİLİRSİNİZ
 
 
 ````
+
 
