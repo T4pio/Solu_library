@@ -1,0 +1,16 @@
+# Gereksiz Sistem Dosyaları
+.DS_Store
+Thumbs.db
+
+# Java ve IntelliJ Çöpleri
+target/
+*.class
+.idea/
+*.iml
+.mvn/
+mvnw
+mvnw.cmd
+help.md
+
+# Loglar
+*.log

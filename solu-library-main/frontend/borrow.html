@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>SOLU Kütüphanesi | Ödünç Aldıklarım</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* --- DESIGN SYSTEM --- */
+      :root {
+        --primary: #1e3a2f;
+        --primary-light: #2c4f41;
+        --accent: #d4a373;
+        --bg-body: #f4f1ea;
+        --surface: #ffffff;
+        --text-main: #2b2b2b;
+        --text-muted: #666666;
+        --border: #e0e0e0;
+        --success: #2a9d8f;
+        --warning: #b76e00;
+        --danger: #d64045;
+        --radius: 12px;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Crimson Pro", serif;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+        border: none;
+        font-family: inherit;
+      }
+
+      /* --- SIDEBAR (RESPONSIVE) --- */
+      .sidebar {
+        width: 280px;
+        background: var(--primary);
+        color: #e0e0e0;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        flex-shrink: 0;
+        z-index: 100;
+      }
+      .brand {
+        font-family: "Crimson Pro", serif;
+        font-size: 1.8rem;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 3rem;
+      }
+      .nav-links li {
+        list-style: none;
+        margin-bottom: 1rem;
+      }
+      .nav-links a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: var(--radius);
+        transition: 0.3s;
+        font-weight: 500;
+        opacity: 0.8;
+      }
+      .nav-links a:hover,
+      .nav-links a.active {
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+        color: #fff;
+      }
+      .nav-links a.active {
+        border-left: 4px solid var(--accent);
+      }
+      .user-mini-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--primary);
+        background-size: cover;
+        background-position: center;
+      }
+
+      /* Sidebar Overlay */
+      .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 90;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+        backdrop-filter: blur(3px);
+      }
+      .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+      }
+
+      /* --- MAIN CONTENT --- */
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      header {
+        background: var(--surface);
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .menu-toggle {
+        display: none;
+        font-size: 1.5rem;
+        color: var(--primary);
+        cursor: pointer;
+        padding: 5px;
+      }
+
+      /* --- İSTATİSTİKLER --- */
+      .stats-row {
+        padding: 2rem 2rem 1rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+      }
+      .stat-card {
+        background: var(--surface);
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .stat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 5px;
+      }
+      .stat-icon {
+        font-size: 1.5rem;
+        color: var(--accent);
+        background: rgba(212, 163, 115, 0.1);
+        padding: 10px;
+        border-radius: 10px;
+      }
+      .stat-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--primary);
+        font-family: "Crimson Pro";
+        line-height: 1.2;
+      }
+      .stat-label {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        font-weight: 600;
+      }
+      .stat-desc {
+        font-size: 0.85rem;
+        color: #888;
+        margin-top: 8px;
+      }
+
+      /* --- ACTIVE LOANS --- */
+      .content-area {
+        padding: 2rem;
+      }
+      .section-header {
+        margin-bottom: 1.5rem;
+      }
+      .section-header h3 {
+        font-size: 1.5rem;
+        color: var(--primary);
+      }
+      .loans-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+
+      .loan-card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        display: flex;
+        gap: 1.5rem;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .loan-cover {
+        width: 80px;
+        height: 120px;
+        border-radius: 8px;
+        object-fit: cover;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+      }
+      .loan-details {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .loan-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        font-family: "Crimson Pro";
+        margin-bottom: 5px;
+      }
+      .loan-meta {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+      .loan-meta span i {
+        margin-right: 5px;
+        color: var(--accent);
+      }
+
+      /* İade Tarihi Göstergesi */
+      .due-date-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .due-warning {
+        background: #fff8e1;
+        color: #b76e00;
+        border: 1px solid #ffe082;
+      }
+      .due-danger {
+        background: #ffebee;
+        color: #c62828;
+        border: 1px solid #ffcdd2;
+      }
+      .due-success {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border: 1px solid #c8e6c9;
+      }
+      .due-pending {
+        background: #e3f2fd;
+        color: #1565c0;
+        border: 1px solid #bbdefb;
+      }
+
+      .return-btn {
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: 0.3s;
+        white-space: nowrap;
+      }
+      .return-btn:hover {
+        background: var(--primary);
+        color: white;
+      }
+      .return-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        border-color: #ccc;
+        color: #888;
+        background: #eee;
+      }
+
+      /* --- HISTORY LIST --- */
+      .table-container {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: var(--surface);
+        margin-top: 1rem;
+      }
+      .history-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px; /* Mobilde scroll olsun diye */
+      }
+      .history-table th,
+      .history-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+      }
+      .history-table th {
+        background: #fafafa;
+        font-weight: 600;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+      .history-table tr:last-child td {
+        border-bottom: none;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--primary);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transform: translateY(100px);
+        transition: 0.3s;
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .toast.show {
+        transform: translateY(0);
+      }
+
+      /* --- RESPONSIVE MEDIA QUERIES --- */
+      @media (max-width: 1024px) {
+        .stats-row {
+          gap: 1rem;
+        }
+      }
+
+      @media (max-width: 768px) {
+        /* Sidebar */
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100%;
+          transform: translateX(-100%);
+          box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar.active {
+          transform: translateX(0);
+        }
+        .menu-toggle {
+          display: block;
+        }
+
+        /* Header */
+        header {
+          padding: 1rem;
+        }
+        header h2 {
+          font-size: 1.2rem;
+        }
+
+        /* Stats */
+        .stats-row {
+          grid-template-columns: 1fr;
+          padding: 1rem;
+        }
+
+        /* Content Area */
+        .content-area {
+          padding: 1rem;
+        }
+
+        /* Loan Card Mobile */
+        .loan-card {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 1rem;
+        }
+        .loan-cover {
+          width: 100%;
+          height: 200px;
+          object-fit: cover;
+        }
+        .loan-details {
+          width: 100%;
+        }
+        .return-btn {
+          width: 100%;
+          text-align: center;
+          margin-top: 10px;
+        }
+
+        /* History Table */
+        .table-container {
+          margin-top: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="toggleSidebar()"
+    ></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div>
+        <div class="brand">
+          <i class="ri-book-mark-fill"></i> SOLU Kütüphanesi
+        </div>
+        <ul class="nav-links">
+          <li>
+            <a href="index.html"><i class="ri-dashboard-line"></i> Keşfet</a>
+          </li>
+          <li>
+            <a href="myLibrary.html"
+              ><i class="ri-book-open-line"></i> Kitaplığım</a
+            >
+          </li>
+          <li>
+            <a href="#" class="active"
+              ><i class="ri-exchange-line"></i> Ödünç Aldıklarım</a
+            >
+          </li>
+          <li>
+            <a href="profile.html"><i class="ri-profile-line"></i> Profilim</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="user-mini-profile">
+        <div class="avatar">?</div>
+        <div>
+          <p style="font-weight: 600">...</p>
+          <p style="font-size: 0.8rem; opacity: 0.7">Üye</p>
+        </div>
+        <i
+          class="ri-settings-4-line"
+          style="margin-left: auto; cursor: pointer"
+          onclick="window.location.href='profile.html'"
+        ></i>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header>
+        <i class="ri-menu-line menu-toggle" onclick="toggleSidebar()"></i>
+        <h2 style="font-size: 1.5rem; color: var(--primary)">
+          Okuma Yolculuğum
+        </h2>
+      </header>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Toplam Okunan</span>
+            <i class="ri-book-open-line stat-icon"></i>
+          </div>
+          <div class="stat-value" id="statTotalRead">-</div>
+          <p class="stat-desc">Kütüphaneden bitirdiğin kitap sayısı.</p>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-header">
+            <span class="stat-label">Kitap Dostları</span>
+            <i class="ri-team-line stat-icon"></i>
+          </div>
+          <div class="stat-value" id="statNetwork">-</div>
+          <p class="stat-desc">Farklı kişiden kitap alarak sosyalleştin.</p>
+        </div>
+
+        <div class="stat-card" style="border-right: 5px solid var(--accent)">
+          <div class="stat-header">
+            <span class="stat-label">Sıradaki Teslim</span>
+            <i class="ri-hourglass-2-fill stat-icon"></i>
+          </div>
+          <div class="stat-value" id="statNextDueValue">-</div>
+          <p class="stat-desc" id="statNextDueSub">Şu an elinde kitap yok.</p>
+        </div>
+      </div>
+
+      <div class="content-area">
+        <div class="section-header">
+          <h3>Şu an Elimdekiler</h3>
+        </div>
+        <div class="loans-list" id="activeLoansList">
+          <p style="color: #666; text-align: center">Yükleniyor...</p>
+        </div>
+      </div>
+
+      <div class="content-area" style="padding-top: 0">
+        <div class="section-header">
+          <h3>Okuma Geçmişi</h3>
+        </div>
+
+        <div class="table-container">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Kitap Adı</th>
+                <th>Yazar</th>
+                <th>Kimden</th>
+                <th>Durum</th>
+              </tr>
+            </thead>
+            <tbody id="historyList"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <div class="toast" id="toast">
+      <i class="ri-checkbox-circle-line" style="font-size: 1.2rem"></i>
+      <span id="toastMessage">İşlem başarılı!</span>
+    </div>
+
+    <script>
+      // 1. OTURUM KONTROLÜ
+      let currentUserJSON = localStorage.getItem("currentUser");
+      if (!currentUserJSON) window.location.href = "login.html";
+      let currentUser = JSON.parse(currentUserJSON);
+
+      if (!currentUser || !currentUser.id) {
+        localStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+      }
+
+      const loansList = document.getElementById("activeLoansList");
+      const historyList = document.getElementById("historyList");
+      const toast = document.getElementById("toast");
+
+      // SIDEBAR TOGGLE FONKSİYONU
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+        sidebar.classList.toggle("active");
+        overlay.classList.toggle("active");
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchCurrentUserAndSidebar();
+        fetchMyRequests(); // Verileri Çek
+      });
+
+      function fetchCurrentUserAndSidebar() {
+        fetch(`http://localhost:5432/api/users/${currentUser.id}`)
+          .then((res) => res.json())
+          .then((user) => {
+            currentUser = user;
+            localStorage.setItem("currentUser", JSON.stringify(user));
+            updateSidebar();
+          });
+      }
+
+      function updateSidebar() {
+        const profileName = document.querySelector(".user-mini-profile div p");
+        const profileAvatar = document.querySelector(
+          ".user-mini-profile .avatar"
+        );
+        const scoreText = document.querySelector(
+          ".user-mini-profile div p:nth-child(2)"
+        );
+
+        if (profileName)
+          profileName.innerText = currentUser.fullName || currentUser.username;
+        if (scoreText) scoreText.innerText = `Puan: ${currentUser.trustScore}`;
+
+        if (currentUser.profileImage && profileAvatar) {
+          profileAvatar.innerText = "";
+          profileAvatar.style.backgroundImage = `url(${currentUser.profileImage})`;
+        } else if (profileAvatar) {
+          profileAvatar.style.backgroundImage = "none";
+          profileAvatar.innerText = currentUser.username
+            .charAt(0)
+            .toUpperCase();
+        }
+      }
+
+      // 2. BACKEND'DEN VERİLERİ ÇEK
+      function fetchMyRequests() {
+        fetch(
+          `http://localhost:5432/api/borrow/my-requests?userId=${currentUser.id}`
+        )
+          .then((res) => res.json())
+          .then((requests) => {
+            updateStats(requests); // İstatistikleri Hesapla
+            renderRequests(requests); // Listeyi Ekrana Bas
+          })
+          .catch((err) => {
+            console.error(err);
+            loansList.innerHTML = "<p>Veriler yüklenirken hata oluştu.</p>";
+          });
+      }
+
+      // --- İSTATİSTİK HESAPLAMA MOTORU ---
+      function updateStats(requests) {
+        // 1. İstatistik: Toplam Okunan (COMPLETED statüsünde olanlar)
+        const completed = requests.filter((r) => r.status === "COMPLETED");
+        document.getElementById("statTotalRead").innerText = completed.length;
+
+        // 2. İstatistik: Etkileşim Ağı (Kaç farklı owner ID var?)
+        const allApproved = requests.filter(
+          (r) =>
+            r.status === "COMPLETED" ||
+            r.status === "APPROVED" ||
+            r.status === "RETURN_REQUESTED"
+        );
+        const uniqueOwners = new Set(allApproved.map((r) => r.book.owner)); // 'Set' sadece benzersizleri tutar
+        document.getElementById("statNetwork").innerText = uniqueOwners.size;
+
+        // 3. İstatistik: Sıradaki Teslim (En yakını bul)
+        const activeLoans = requests.filter((r) => r.status === "APPROVED");
+        const nextDueEl = document.getElementById("statNextDueValue");
+        const nextDueSubEl = document.getElementById("statNextDueSub");
+
+        if (activeLoans.length === 0) {
+          nextDueEl.innerText = "-";
+          nextDueSubEl.innerText = "Şu an elinde kitap yok.";
+          nextDueEl.style.color = "var(--primary)";
+        } else {
+          // Tarihe göre sırala (En yakın tarih en başa)
+          activeLoans.sort(
+            (a, b) => new Date(a.deliveryDate) - new Date(b.deliveryDate)
+          );
+          const nearest = activeLoans[0];
+          const daysLeft = getDaysDiff(nearest.deliveryDate);
+
+          if (daysLeft < 0) {
+            nextDueEl.innerText = `${Math.abs(daysLeft)} Gün`;
+            nextDueSubEl.innerHTML = `<span style="color:var(--danger)">Gecikti: ${nearest.book.title}</span>`;
+            nextDueEl.style.color = "var(--danger)";
+          } else if (daysLeft === 0) {
+            nextDueEl.innerText = "Bugün";
+            nextDueSubEl.innerText = `Son Gün: ${nearest.book.title}`;
+            nextDueEl.style.color = "var(--warning)";
+          } else {
+            nextDueEl.innerText = `${daysLeft} Gün`;
+            nextDueSubEl.innerText = `Kitap: ${nearest.book.title}`;
+            // 3 günden az kaldıysa turuncu, çoksa yeşil
+            nextDueEl.style.color =
+              daysLeft <= 3 ? "var(--warning)" : "var(--success)";
+          }
+        }
+      }
+
+      function getDaysDiff(dateString) {
+        if (!dateString) return 0;
+        const today = new Date();
+        const due = new Date(dateString);
+        const diffTime = due - today;
+        return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      }
+
+      function renderRequests(requests) {
+        loansList.innerHTML = "";
+        historyList.innerHTML = "";
+
+        const activeRequests = requests.filter(
+          (r) => r.status === "APPROVED" || r.status === "RETURN_REQUESTED"
+        );
+
+        const historyRequests = requests.filter(
+          (r) =>
+            r.status === "COMPLETED" ||
+            r.status === "REJECTED" ||
+            r.status === "PENDING"
+        );
+
+        // --- AKTİF ÖDÜNÇLER ---
+        if (activeRequests.length === 0) {
+          loansList.innerHTML = `<div style="text-align:center; color:#999; padding:20px;">Şu an ödünç aldığın bir kitap yok.</div>`;
+        } else {
+          activeRequests.forEach((req) => {
+            const daysLeft = getDaysDiff(req.deliveryDate);
+            let badgeClass = "due-success";
+            let badgeText = `${daysLeft} Gün Kaldı`;
+            let icon = "ri-time-line";
+            let btnHtml = `<button class="return-btn" onclick="returnBook(${req.id})"><i class="ri-arrow-go-back-line"></i> İade Et</button>`;
+
+            if (req.status === "RETURN_REQUESTED") {
+              badgeClass = "due-pending";
+              badgeText = "Onay Bekleniyor";
+              icon = "ri-hourglass-line";
+              btnHtml = `<button class="return-btn" disabled>Onay Bekleniyor</button>`;
+            } else if (daysLeft < 0) {
+              badgeClass = "due-danger";
+              badgeText = `${Math.abs(daysLeft)} Gün Gecikti!`;
+              icon = "ri-alarm-warning-line";
+            }
+
+            const card = document.createElement("div");
+            card.className = "loan-card";
+            card.innerHTML = `
+                        <img src="${req.book.image}" class="loan-cover" alt="Kapak" onerror="this.src='https://images.unsplash.com/photo-1541963463532-d68292c34b19?auto=format&fit=crop&q=80&w=400'">
+                        <div class="loan-details">
+                            <div class="loan-title">${req.book.title}</div>
+                            <div class="loan-meta">
+                                <span><i class="ri-quill-pen-line"></i> ${req.book.author}</span>
+                                <span><i class="ri-user-smile-line"></i> Sahibi: ${req.book.owner}</span>
+                            </div>
+                            <div class="due-date-badge ${badgeClass}">
+                                <i class="${icon}"></i> ${badgeText}
+                            </div>
+                        </div>
+                        ${btnHtml}
+                    `;
+            loansList.appendChild(card);
+          });
+        }
+
+        // --- GEÇMİŞ LİSTESİ ---
+        if (historyRequests.length === 0) {
+          historyList.innerHTML =
+            "<tr><td colspan='4' style='text-align:center; color:#999;'>Geçmiş kayıt yok.</td></tr>";
+        } else {
+          historyRequests.forEach((req) => {
+            let statusLabel = "";
+            if (req.status === "COMPLETED")
+              statusLabel = "<span style='color:green'>Tamamlandı</span>";
+            else if (req.status === "REJECTED")
+              statusLabel = "<span style='color:red'>Reddedildi</span>";
+            else if (req.status === "PENDING")
+              statusLabel = "<span style='color:orange'>Onay Bekliyor</span>";
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                        <td>${req.book.title}</td>
+                        <td>${req.book.author}</td>
+                        <td>${req.book.owner}</td>
+                        <td>${statusLabel}</td>
+                    `;
+            historyList.appendChild(row);
+          });
+        }
+      }
+
+      // --- 3. İADE İSTEĞİ GÖNDER ---
+      function returnBook(requestId) {
+        if (
+          confirm(
+            "Bu kitabı iade etmek istediğine emin misin? Sahibi onaylayınca işlem tamamlanacak."
+          )
+        ) {
+          fetch(
+            `http://localhost:5432/api/borrow/${requestId}/return-request`,
+            {
+              method: "PUT",
+            }
+          ).then((res) => {
+            if (res.ok) {
+              showToast(
+                "İade talebi gönderildi. Sahibi onaylayınca puan kazanacaksın!"
+              );
+              fetchMyRequests(); // Ekranı yenile
+            } else {
+              alert("Bir hata oluştu.");
+            }
+          });
+        }
+      }
+
+      function showToast(msg) {
+        const toastMsg = document.getElementById("toastMessage");
+        toastMsg.innerText = msg;
+        toast.classList.add("show");
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>
