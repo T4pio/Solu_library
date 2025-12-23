@@ -33,8 +33,8 @@ public class UserService {
         return null;
     }
 
-    // --- İŞTE SİHİRLİ DOKUNUŞ BURADA ---
-    @Transactional // <--- BU SATIR VERİYİ DİSKE KAZIYACAK
+    // --- User datalarini veritabanina yaziyoruz ---
+    @Transactional // 
     public User updateUser(Long id, User userDetails) {
         User existingUser = userRepository.findById(id).orElse(null);
         if (existingUser != null) {
@@ -48,7 +48,7 @@ public class UserService {
             if(userDetails.getProfileImage() != null) existingUser.setProfileImage(userDetails.getProfileImage());
             if(userDetails.getCurrentStatus() != null) existingUser.setCurrentStatus(userDetails.getCurrentStatus());
 
-            // Kaydet ve hemen diske yaz (saveAndFlush garantidir)
+            // 
             return userRepository.saveAndFlush(existingUser);
         }
         return null;

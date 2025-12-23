@@ -21,18 +21,18 @@ public class User {
 
     private String email;
 
-    // --- YENİ EKLENEN ALANLAR ---
 
-    @Column(columnDefinition = "TEXT") // Uzun resim kodu için (Base64)
+
+    @Column(columnDefinition = "TEXT") 
     private String profileImage;
 
-    private String aboutMe; // Biyografi (Hakkımda)
+    private String aboutMe; 
 
-    private String location; // Konum (İlçe/Şehir)
+    private String location;
 
-    private String phone; // Telefon
+    private String phone;
 
-    private String currentStatus; // Şu an ne okuyor? (WhatsApp durumu gibi)
+    private String currentStatus;
 
-    private int trustScore = 100; // Güven Puanı
+    private int trustScore = 100
 }
