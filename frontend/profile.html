@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>SOLU Kütüphanesi | Profil</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* --- DESIGN SYSTEM --- */
+      :root {
+        --primary: #1e3a2f;
+        --primary-light: #2c4f41;
+        --accent: #d4a373;
+        --bg-body: #f4f1ea;
+        --surface: #ffffff;
+        --text-main: #2b2b2b;
+        --text-muted: #666666;
+        --border: #e0e0e0;
+        --success: #2a9d8f;
+        --danger: #d64045;
+        --radius: 12px;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background: var(--bg-body);
+        color: var(--text-main);
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Crimson Pro", serif;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+        border: none;
+        font-family: inherit;
+      }
+
+      /* --- SIDEBAR (RESPONSIVE) --- */
+      .sidebar {
+        width: 280px;
+        background: var(--primary);
+        color: #e0e0e0;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        flex-shrink: 0;
+        z-index: 100;
+      }
+      .brand {
+        font-family: "Crimson Pro", serif;
+        font-size: 1.8rem;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 3rem;
+      }
+      .nav-links li {
+        list-style: none;
+        margin-bottom: 1rem;
+      }
+      .nav-links a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: var(--radius);
+        transition: 0.3s;
+        font-weight: 500;
+        opacity: 0.8;
+      }
+      .nav-links a:hover,
+      .nav-links a.active {
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+        color: #fff;
+      }
+      .nav-links a.active {
+        border-left: 4px solid var(--accent);
+      }
+      .user-mini-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .avatar-mini {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--primary);
+        background-size: cover;
+        background-position: center;
+      }
+
+      /* Sidebar Overlay */
+      .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 90;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+        backdrop-filter: blur(3px);
+      }
+      .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+      }
+
+      /* --- MAIN CONTENT --- */
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        padding: 2rem;
+        position: relative;
+      }
+
+      /* Mobile Header (Sadece Mobilde Görünür) */
+      .mobile-header {
+        display: none;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+      .menu-toggle {
+        font-size: 1.5rem;
+        color: var(--primary);
+        cursor: pointer;
+      }
+      .mobile-title {
+        font-family: "Crimson Pro", serif;
+        font-size: 1.5rem;
+        color: var(--primary);
+        font-weight: 600;
+      }
+
+      /* HEADER CARD */
+      .profile-header {
+        background: var(--surface);
+        border-radius: var(--radius);
+        padding: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 2rem;
+        box-shadow: var(--shadow);
+        margin-bottom: 2rem;
+        border: 1px solid var(--border);
+        position: relative;
+      }
+
+      .profile-bg-accent {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 150px;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(212, 163, 115, 0.1)
+        );
+        clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%);
+        border-top-right-radius: var(--radius);
+        border-bottom-right-radius: var(--radius);
+        pointer-events: none;
+      }
+
+      .profile-avatar-large {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: #eee;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        border: 4px solid #f0f0f0;
+        position: relative;
+        background-size: cover;
+        background-position: center;
+        flex-shrink: 0;
+      }
+
+      .edit-avatar-btn {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: var(--accent);
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        border: 2px solid white;
+        transition: 0.2s;
+      }
+
+      .profile-info {
+        flex: 1;
+        z-index: 1;
+      }
+      .profile-info h2 {
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+        color: var(--primary);
+        line-height: 1.2;
+      }
+      .profile-status {
+        font-size: 0.95rem;
+        color: var(--success);
+        font-weight: 600;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .profile-meta {
+        color: var(--text-muted);
+        display: flex;
+        gap: 20px;
+        font-size: 0.9rem;
+        flex-wrap: wrap;
+      }
+      .profile-meta span {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .profile-meta i {
+        color: var(--accent);
+        font-size: 1.1rem;
+      }
+
+      /* GRID DÜZENİ */
+      .profile-grid {
+        display: grid;
+        grid-template-columns: 3fr 1fr;
+        gap: 2rem;
+        align-items: start;
+      }
+
+      .form-card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        padding: 2rem;
+        border: 1px solid var(--border);
+      }
+      .card-title {
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        color: var(--primary);
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-family: inherit;
+        background: #fafafa;
+        transition: 0.3s;
+        font-size: 0.95rem;
+      }
+      .form-group input:focus {
+        border-color: var(--accent);
+        background: #fff;
+      }
+
+      .read-only-input {
+        background: transparent !important;
+        border: none !important;
+        padding-left: 0 !important;
+        font-weight: 500;
+        color: #333;
+      }
+      .hidden {
+        display: none !important;
+      }
+
+      .trust-card {
+        background: var(--primary);
+        color: white;
+        border-radius: var(--radius);
+        padding: 2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+      .trust-score-circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 5px solid var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 2rem;
+        font-weight: bold;
+        font-family: "Crimson Pro";
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .badges-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      .badge-item {
+        background: var(--bg-body);
+        border-radius: 8px;
+        padding: 1rem 0.5rem;
+        text-align: center;
+        border: 1px solid var(--border);
+        transition: 0.3s;
+        opacity: 0.4;
+        filter: grayscale(1);
+      }
+      .badge-item.active {
+        opacity: 1;
+        filter: grayscale(0);
+        border-color: var(--accent);
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+      .badge-icon {
+        font-size: 1.5rem;
+        color: var(--primary);
+        margin-bottom: 5px;
+      }
+      .badge-name {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+      }
+
+      .btn-save {
+        background: var(--primary);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+        float: right;
+        box-shadow: 0 4px 10px rgba(30, 58, 47, 0.2);
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      .btn-save:hover {
+        background: var(--primary-light);
+      }
+      .btn-logout {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--danger);
+        color: var(--danger);
+        background: transparent;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 1rem;
+        transition: 0.3s;
+        cursor: pointer;
+      }
+      .btn-logout:hover {
+        background: #fff0f0;
+      }
+
+      .user-books-section {
+        margin-top: 2rem;
+      }
+      .user-books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+      }
+      .mini-book-card {
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #eee;
+        text-align: center;
+        font-size: 0.9rem;
+        transition: 0.3s;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+      .mini-book-card:hover {
+        transform: translateY(-5px);
+      }
+      .mini-book-img {
+        height: 160px;
+        width: 100%;
+        object-fit: cover;
+        background: #ddd;
+      }
+      .mini-book-title {
+        padding: 8px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--primary);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transform: translateY(100px);
+        transition: 0.3s;
+        z-index: 2000;
+      }
+      .toast.show {
+        transform: translateY(0);
+      }
+
+      /* --- RESPONSIVE MEDIA QUERIES --- */
+      @media (max-width: 1100px) {
+        .profile-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 768px) {
+        /* Sidebar Drawer Logic */
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100%;
+          transform: translateX(-100%);
+          box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar.active {
+          transform: translateX(0);
+        }
+
+        .mobile-header {
+          display: flex;
+        } /* Menü ikonunu göster */
+        .main-content {
+          padding: 1.5rem;
+        }
+
+        /* Profile Header Mobile */
+        .profile-header {
+          flex-direction: column;
+          text-align: center;
+          gap: 1.5rem;
+          padding: 2rem 1rem;
+        }
+        .profile-meta {
+          justify-content: center;
+          gap: 10px;
+        }
+        .profile-bg-accent {
+          clip-path: polygon(0 0, 100% 0, 100% 100%, 0 80%);
+          width: 100%;
+          height: 80px;
+          border-radius: var(--radius) var(--radius) 0 0;
+        }
+
+        /* Form Mobile */
+        .form-card {
+          padding: 1.5rem;
+        }
+        .form-row {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+          margin-bottom: 1rem;
+        }
+        .btn-save {
+          width: 100%;
+          margin-top: 10px;
+        }
+
+        /* Books Grid Mobile */
+        .user-books-grid {
+          grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+          gap: 1rem;
+        }
+        .mini-book-img {
+          height: 140px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="toggleSidebar()"
+    ></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div>
+        <div class="brand">
+          <i class="ri-book-mark-fill"></i> SOLU Kütüphanesi
+        </div>
+        <ul class="nav-links">
+          <li>
+            <a href="index.html"><i class="ri-dashboard-line"></i> Keşfet</a>
+          </li>
+          <li>
+            <a href="myLibrary.html"
+              ><i class="ri-book-open-line"></i> Kitaplığım</a
+            >
+          </li>
+          <li>
+            <a href="borrow.html"
+              ><i class="ri-exchange-line"></i> Ödünç Aldıklarım</a
+            >
+          </li>
+          <li>
+            <a href="profile.html" class="active"
+              ><i class="ri-profile-line"></i> Profilim</a
+            >
+          </li>
+        </ul>
+      </div>
+      <div class="user-mini-profile">
+        <div class="avatar-mini">?</div>
+        <div><p style="font-weight: 600; font-size: 0.9rem">...</p></div>
+        <i
+          class="ri-settings-4-line"
+          style="margin-left: auto; cursor: pointer"
+        ></i>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="mobile-header">
+        <i class="ri-menu-line menu-toggle" onclick="toggleSidebar()"></i>
+        <span class="mobile-title">Profilim</span>
+      </div>
+
+      <div class="profile-header">
+        <div class="profile-bg-accent"></div>
+        <div class="profile-avatar-large" id="avatarDisplay">
+          <span id="avatarInitial">?</span>
+          <button
+            class="edit-avatar-btn owner-only"
+            onclick="document.getElementById('avatarInput').click()"
+          >
+            <i class="ri-camera-line"></i>
+          </button>
+          <input type="file" id="avatarInput" hidden accept="image/*" />
+        </div>
+
+        <div class="profile-info">
+          <h2 id="headerName">...</h2>
+          <div class="profile-status" id="headerStatus" style="display: none">
+            <i class="ri-book-read-line"></i> <span>Şu an okuyor: ...</span>
+          </div>
+          <div class="profile-meta">
+            <span id="headerLocation"
+              ><i class="ri-map-pin-line"></i> Konum Girilmedi</span
+            >
+            <span id="headerTitle"><i class="ri-medal-line"></i> Üye</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-grid">
+        <div class="left-col">
+          <div class="form-card">
+            <h3 class="card-title">Kişisel Bilgiler</h3>
+            <form id="profileForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Ad Soyad</label>
+                  <input type="text" id="fullName" placeholder="Adını gir" />
+                </div>
+                <div class="form-group">
+                  <label>E-posta</label>
+                  <input type="email" id="email" placeholder="E-posta adresi" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Şu an ne okuyorsun?</label>
+                <input type="text" id="currentStatus" placeholder="Durum" />
+              </div>
+              <div class="form-group" style="margin-bottom: 1.5rem">
+                <label>Hakkımda (Bio)</label>
+                <textarea id="aboutMe" rows="3" placeholder="..."></textarea>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Konum</label>
+                  <input
+                    type="text"
+                    id="location"
+                    placeholder="Örn: İstanbul"
+                  />
+                </div>
+                <div class="form-group">
+                  <label>Telefon</label>
+                  <input type="tel" id="phone" placeholder="+90 555 ..." />
+                </div>
+              </div>
+
+              <button type="submit" class="btn-save owner-only">
+                Değişiklikleri Kaydet
+              </button>
+              <div style="clear: both"></div>
+            </form>
+          </div>
+
+          <div
+            class="user-books-section"
+            id="userBooksSection"
+            style="display: none"
+          >
+            <h3
+              style="
+                font-size: 1.2rem;
+                color: var(--primary);
+                margin-bottom: 10px;
+              "
+            >
+              Kütüphanesi
+            </h3>
+            <div class="user-books-grid" id="userBooksGrid"></div>
+          </div>
+        </div>
+
+        <div class="right-col">
+          <div class="trust-card">
+            <div class="trust-score-circle" id="trustScore">100</div>
+            <h3 style="margin-bottom: 5px">Güvenilirlik Skoru</h3>
+            <p style="font-size: 0.9rem; opacity: 0.8">
+              Puan teslimat hızına göre değişir.
+            </p>
+          </div>
+
+          <div class="form-card">
+            <h3 class="card-title">Rozetler</h3>
+            <div class="badges-grid">
+              <div class="badge-item" id="badge-fast">
+                <div class="badge-icon"><i class="ri-rocket-line"></i></div>
+                <div class="badge-name">Hızlı</div>
+              </div>
+              <div class="badge-item" id="badge-sharer">
+                <div class="badge-icon"><i class="ri-open-arm-line"></i></div>
+                <div class="badge-name">Paylaşımcı</div>
+              </div>
+              <div class="badge-item" id="badge-trusted">
+                <div class="badge-icon">
+                  <i class="ri-shield-star-line"></i>
+                </div>
+                <div class="badge-name">Güvenilir</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn-logout owner-only" onclick="logout()">
+            <i class="ri-logout-box-r-line"></i> Çıkış Yap
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <div class="toast" id="toast">
+      <span id="toastMessage">Profil güncellendi!</span>
+    </div>
+
+    <script>
+      let loggedInUser = JSON.parse(localStorage.getItem("currentUser"));
+      if (!loggedInUser) window.location.href = "login.html";
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetUserId = urlParams.get("id");
+      const isVisitorMode = targetUserId && targetUserId != loggedInUser.id;
+      const fetchUserId = isVisitorMode ? targetUserId : loggedInUser.id;
+      let displayedUser = null;
+
+      // SIDEBAR TOGGLE FONKSİYONU
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+        sidebar.classList.toggle("active");
+        overlay.classList.toggle("active");
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        setupUI();
+        fillSidebar();
+        fetchProfileData();
+      });
+
+      function setupUI() {
+        if (isVisitorMode) {
+          document
+            .querySelectorAll(".owner-only")
+            .forEach((el) => el.classList.add("hidden"));
+          const inputs = document.querySelectorAll(
+            "#profileForm input, #profileForm textarea"
+          );
+          inputs.forEach((input) => {
+            input.setAttribute("readonly", true);
+            input.classList.add("read-only-input");
+          });
+        }
+      }
+
+      function fillSidebar() {
+        document.querySelector(".user-mini-profile p").innerText =
+          loggedInUser.fullName || loggedInUser.username;
+        const sideAvatar = document.querySelector(".avatar-mini");
+        if (loggedInUser.profileImage) {
+          sideAvatar.innerText = "";
+          sideAvatar.style.backgroundImage = `url(${loggedInUser.profileImage})`;
+        } else {
+          sideAvatar.innerText = loggedInUser.username.charAt(0).toUpperCase();
+        }
+      }
+
+      function fetchProfileData() {
+        fetch(`http://localhost:3000/api/users/${fetchUserId}`)
+          .then((res) => res.json())
+          .then((user) => {
+            displayedUser = user;
+            fillPage(user);
+            loadUserLibrary(user.username);
+            if (!isVisitorMode)
+              localStorage.setItem("currentUser", JSON.stringify(user));
+          });
+      }
+
+      function fillPage(user) {
+        document.getElementById("headerName").innerText =
+          user.fullName || user.username;
+
+        if (user.profileImage) {
+          document.getElementById(
+            "avatarDisplay"
+          ).style.backgroundImage = `url(${user.profileImage})`;
+          document.getElementById("avatarInitial").style.display = "none";
+        } else {
+          document.getElementById("avatarDisplay").style.backgroundImage =
+            "none";
+          document.getElementById("avatarInitial").style.display = "block";
+          document.getElementById("avatarInitial").innerText = user.username
+            .charAt(0)
+            .toUpperCase();
+        }
+
+        if (user.currentStatus) {
+          document.getElementById("headerStatus").style.display = "flex";
+          document
+            .getElementById("headerStatus")
+            .querySelector("span").innerText =
+            "Şu an okuyor: " + user.currentStatus;
+        }
+        if (user.location) {
+          document.getElementById(
+            "headerLocation"
+          ).innerHTML = `<i class="ri-map-pin-line"></i> ${user.location}`;
+        }
+
+        document.getElementById("fullName").value = user.fullName || "";
+        document.getElementById("email").value = user.email || "";
+        document.getElementById("aboutMe").value = user.aboutMe || "";
+        document.getElementById("location").value = user.location || "";
+        document.getElementById("phone").value = user.phone || "";
+        document.getElementById("currentStatus").value =
+          user.currentStatus || "";
+        document.getElementById("trustScore").innerText =
+          user.trustScore || 100;
+      }
+
+      function loadUserLibrary(username) {
+        fetch("http://localhost:3000/api/books")
+          .then((res) => res.json())
+          .then((books) => {
+            const userBooks = books.filter((b) => b.owner === username);
+
+            if (userBooks.length >= 5)
+              document.getElementById("badge-sharer").classList.add("active");
+            if (displayedUser.trustScore >= 90)
+              document.getElementById("badge-trusted").classList.add("active");
+
+            const grid = document.getElementById("userBooksGrid");
+            const section = document.getElementById("userBooksSection");
+
+            if (userBooks.length > 0) {
+              section.style.display = "block";
+              grid.innerHTML = "";
+              userBooks.forEach((b) => {
+                grid.innerHTML += `
+                                <div class="mini-book-card">
+                                    <img src="${b.image}" class="mini-book-img">
+                                    <div class="mini-book-title">${b.title}</div>
+                                </div>
+                            `;
+              });
+            } else {
+              section.style.display = "block";
+              grid.innerHTML =
+                "<p style='color:#999; font-size:0.9rem;'>Henüz kitap eklememiş.</p>";
+            }
+          });
+      }
+
+      const profileForm = document.getElementById("profileForm");
+      profileForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (isVisitorMode) return;
+
+        const updatedData = {
+          fullName: document.getElementById("fullName").value,
+          email: document.getElementById("email").value,
+          aboutMe: document.getElementById("aboutMe").value,
+          location: document.getElementById("location").value,
+          phone: document.getElementById("phone").value,
+          currentStatus: document.getElementById("currentStatus").value,
+          profileImage:
+            displayedUser.newProfileImage || displayedUser.profileImage,
+        };
+
+        fetch(`http://localhost:3000/api/users/${loggedInUser.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedData),
+        })
+          .then((res) => res.json())
+          .then((updatedUser) => {
+            loggedInUser = updatedUser;
+            localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+            displayedUser = updatedUser;
+            showToast("Profil güncellendi!");
+            fillSidebar();
+          });
+      });
+
+      const avatarInput = document.getElementById("avatarInput");
+      const convertBase64 = (file) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = (error) => reject(error);
+        });
+
+      avatarInput.addEventListener("change", async (e) => {
+        if (e.target.files && e.target.files[0]) {
+          const base64 = await convertBase64(e.target.files[0]);
+          document.getElementById(
+            "avatarDisplay"
+          ).style.backgroundImage = `url(${base64})`;
+          document.getElementById("avatarInitial").style.display = "none";
+          displayedUser.newProfileImage = base64;
+        }
+      });
+
+      function logout() {
+        if (confirm("Çıkış yapmak istediğine emin misin?")) {
+          localStorage.removeItem("currentUser");
+          window.location.href = "login.html";
+        }
+      }
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        document.getElementById("toastMessage").innerText = msg;
+        t.classList.add("show");
+        setTimeout(() => t.classList.remove("show"), 3000);
+      }
+    </script>
+  </body>
+</html>

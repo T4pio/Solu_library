@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>SOLU Kütüphanesi | Kitaplığım</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=DM+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* --- DESIGN SYSTEM --- */
+      :root {
+        --primary: #1e3a2f;
+        --primary-light: #2c4f41;
+        --accent: #d4a373;
+        --bg-body: #f4f1ea;
+        --surface: #ffffff;
+        --text-main: #2b2b2b;
+        --text-muted: #666666;
+        --border: #e0e0e0;
+        --success: #2a9d8f;
+        --danger: #d64045;
+        --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --radius: 12px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        outline: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      body {
+        font-family: "DM Sans", sans-serif;
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4 {
+        font-family: "Crimson Pro", serif;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      button {
+        cursor: pointer;
+        border: none;
+        font-family: inherit;
+      }
+
+      /* --- SIDEBAR (RESPONSIVE) --- */
+      .sidebar {
+        width: 280px;
+        background: var(--primary);
+        color: #e0e0e0;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        flex-shrink: 0;
+        z-index: 100;
+      }
+      .brand {
+        font-family: "Crimson Pro", serif;
+        font-size: 1.8rem;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 3rem;
+      }
+      .nav-links li {
+        list-style: none;
+        margin-bottom: 1rem;
+      }
+      .nav-links a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 15px;
+        border-radius: var(--radius);
+        transition: 0.3s;
+        font-weight: 500;
+        opacity: 0.8;
+      }
+      .nav-links a:hover,
+      .nav-links a.active {
+        background: rgba(255, 255, 255, 0.1);
+        opacity: 1;
+        color: #fff;
+      }
+      .nav-links a.active {
+        border-left: 4px solid var(--accent);
+      }
+      .user-mini-profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: var(--primary);
+        background-size: cover;
+        background-position: center;
+      }
+
+      /* Sidebar Overlay */
+      .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 90;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+        backdrop-filter: blur(3px);
+      }
+      .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+      }
+
+      /* --- MAIN CONTENT --- */
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        position: relative;
+      }
+
+      header {
+        background: var(--surface);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        gap: 1rem;
+      }
+
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+      }
+      .menu-toggle {
+        display: none;
+        font-size: 1.5rem;
+        color: var(--primary);
+        cursor: pointer;
+        padding: 5px;
+      }
+
+      .search-bar {
+        background: var(--bg-body);
+        padding: 10px 20px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 350px;
+        border: 1px solid transparent;
+        transition: 0.3s;
+      }
+      .search-bar:focus-within {
+        border-color: var(--accent);
+        background: #fff;
+        box-shadow: 0 0 0 4px rgba(212, 163, 115, 0.1);
+      }
+      .search-bar input {
+        border: none;
+        background: transparent;
+        width: 100%;
+        font-size: 0.95rem;
+      }
+
+      .add-book-btn {
+        background: var(--primary);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 30px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.3s;
+        box-shadow: 0 4px 10px rgba(30, 58, 47, 0.3);
+        white-space: nowrap;
+      }
+      .add-book-btn:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+      }
+
+      /* --- STATS --- */
+      .stats-row {
+        padding: 2rem 2rem 1rem;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+      }
+      .stat-card {
+        background: var(--surface);
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: rgba(212, 163, 115, 0.15);
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+      }
+      .stat-info h4 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+      .stat-info p {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+      }
+
+      /* --- REQUESTS PANEL --- */
+      .requests-section {
+        padding: 0 2rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+      }
+      .request-card {
+        background: #fffbf5;
+        border: 1px solid var(--accent);
+        padding: 1rem;
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .request-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .request-user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #ddd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        font-weight: bold;
+        background-size: cover;
+        flex-shrink: 0;
+      }
+      .btn-group {
+        display: flex;
+        gap: 10px;
+      }
+      .btn-accept {
+        background: var(--success);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: 0.2s;
+      }
+      .btn-reject {
+        background: transparent;
+        border: 1px solid #d64045;
+        color: #d64045;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: 0.2s;
+      }
+
+      /* --- BOOKS GRID --- */
+      .content-area {
+        padding: 2rem;
+      }
+      .section-title {
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 2rem;
+      }
+
+      .book-card {
+        background: var(--surface);
+        border-radius: var(--radius);
+        overflow: hidden;
+        border: 1px solid var(--border);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+      }
+      .book-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow);
+        border-color: var(--accent);
+      }
+      .book-cover {
+        height: 180px;
+        background: #ddd;
+        position: relative;
+        overflow: hidden;
+      }
+      .book-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s;
+      }
+      .book-card:hover .book-cover img {
+        transform: scale(1.05);
+      }
+      .card-body {
+        padding: 1.2rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+      .book-title {
+        font-family: "Crimson Pro", serif;
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        color: var(--primary);
+      }
+      .book-author {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+      }
+      .card-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        border-top: 1px solid #f0f0f0;
+        padding-top: 1rem;
+      }
+      .status {
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+      .status.available {
+        background: #e6f4f1;
+        color: var(--success);
+      }
+      .status.borrowed {
+        background: #fff0f0;
+        color: #d64045;
+      }
+      .admin-actions {
+        display: flex;
+        gap: 8px;
+      }
+      .btn-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+      }
+      .btn-delete {
+        background: #fff0f0;
+        color: var(--danger);
+      }
+      .btn-delete:hover {
+        background: var(--danger);
+        color: white;
+      }
+
+      /* --- TOAST --- */
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--primary);
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        transform: translateY(100px);
+        transition: 0.3s;
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .toast.show {
+        transform: translateY(0);
+      }
+
+      /* --- RESPONSIVE MEDIA QUERIES --- */
+      @media (max-width: 1024px) {
+        .stats-row {
+          gap: 1rem;
+        }
+        .books-grid {
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+      }
+
+      @media (max-width: 768px) {
+        /* Sidebar Drawer Logic */
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100%;
+          transform: translateX(-100%);
+          box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar.active {
+          transform: translateX(0);
+        }
+
+        .menu-toggle {
+          display: block;
+        }
+
+        /* Header */
+        header {
+          flex-direction: column;
+          align-items: stretch;
+          padding: 1rem;
+          gap: 15px;
+        }
+        .header-left {
+          width: 100%;
+          gap: 10px;
+        }
+        .search-bar {
+          width: 100%;
+        }
+        .add-book-btn {
+          width: 100%;
+          justify-content: center;
+        }
+
+        /* Stats Stack */
+        .stats-row {
+          grid-template-columns: 1fr;
+          padding: 1rem;
+        }
+
+        /* Requests Card Mobile */
+        .request-card {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 15px;
+        }
+        .request-info {
+          width: 100%;
+        }
+        .btn-group {
+          width: 100%;
+          justify-content: space-between;
+        }
+        .btn-accept,
+        .btn-reject {
+          flex: 1;
+          text-align: center;
+        }
+
+        /* Content Area */
+        .content-area {
+          padding: 1rem;
+        }
+        .books-grid {
+          grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+          gap: 1rem;
+        }
+        .requests-section {
+          padding: 0 1rem;
+        }
+
+        /* Typography */
+        .book-title {
+          font-size: 1.1rem;
+        }
+        .book-cover {
+          height: 150px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="toggleSidebar()"
+    ></div>
+
+    <aside class="sidebar" id="sidebar">
+      <div>
+        <div class="brand">
+          <i class="ri-book-mark-fill"></i> SOLU Kütüphanesi
+        </div>
+        <ul class="nav-links">
+          <li>
+            <a href="index.html"><i class="ri-dashboard-line"></i> Keşfet</a>
+          </li>
+          <li>
+            <a href="myLibrary.html" class="active"
+              ><i class="ri-book-open-line"></i> Kitaplığım</a
+            >
+          </li>
+          <li>
+            <a href="borrow.html"
+              ><i class="ri-exchange-line"></i> Ödünç Aldıklarım</a
+            >
+          </li>
+          <li>
+            <a href="profile.html"><i class="ri-profile-line"></i> Profilim</a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="user-mini-profile">
+        <div class="avatar">?</div>
+        <div>
+          <p style="font-weight: 600">...</p>
+          <p style="font-size: 0.8rem; opacity: 0.7">Üye</p>
+        </div>
+        <i
+          class="ri-settings-4-line"
+          style="margin-left: auto; cursor: pointer"
+          onclick="window.location.href='profile.html'"
+        ></i>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header>
+        <div class="header-left">
+          <i class="ri-menu-line menu-toggle" onclick="toggleSidebar()"></i>
+          <div class="search-bar">
+            <i class="ri-search-line" style="color: #999"></i>
+            <input
+              type="text"
+              id="myBookSearch"
+              placeholder="Kendi kitaplarımda ara..."
+            />
+          </div>
+        </div>
+        <button
+          class="add-book-btn"
+          onclick="window.location.href='index.html'"
+        >
+          <i class="ri-add-line"></i> Kitap Ekle
+        </button>
+      </header>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="ri-stack-line"></i></div>
+          <div class="stat-info">
+            <h4 id="myTotalBooks">-</h4>
+            <p>Eklediğim Kitap</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="ri-share-forward-line"></i></div>
+          <div class="stat-info">
+            <h4 id="borrowedCount">-</h4>
+            <p>Şu an Ödünçte</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div
+            class="stat-icon"
+            style="background: rgba(212, 163, 115, 0.3); color: #b07d4b"
+          >
+            <i class="ri-notification-3-line"></i>
+          </div>
+          <div class="stat-info">
+            <h4 style="color: #b07d4b" id="requestCount">-</h4>
+            <p>Bekleyen İstek</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="requests-section" id="requestsPanel"></div>
+
+      <div class="content-area">
+        <div class="section-title">
+          <h3>Rafımdaki Kitaplar</h3>
+        </div>
+        <div class="books-grid" id="myBooksGrid"></div>
+      </div>
+    </main>
+
+    <div class="toast" id="toast">
+      <i class="ri-checkbox-circle-line" style="font-size: 1.2rem"></i>
+      <span id="toastMessage">İşlem başarılı!</span>
+    </div>
+
+    <script>
+      // 1. OTURUM KONTROLÜ
+      let currentUserJSON = localStorage.getItem("currentUser");
+      if (!currentUserJSON) window.location.href = "login.html";
+      let currentUser = JSON.parse(currentUserJSON);
+
+      if (!currentUser || !currentUser.id) {
+        localStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+      }
+
+      const myBooksGrid = document.getElementById("myBooksGrid");
+      const requestsPanel = document.getElementById("requestsPanel");
+      const myTotalBooksEl = document.getElementById("myTotalBooks");
+      const borrowedCountEl = document.getElementById("borrowedCount");
+      const requestCountEl = document.getElementById("requestCount");
+      const searchInput = document.getElementById("myBookSearch");
+      const toast = document.getElementById("toast");
+
+      // SIDEBAR TOGGLE FONKSİYONU
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+        sidebar.classList.toggle("active");
+        overlay.classList.toggle("active");
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        fetchCurrentUserAndSidebar();
+        fetchMyBooks();
+        fetchIncomingRequests();
+      });
+
+      function fetchCurrentUserAndSidebar() {
+        fetch(`http://localhost:3000/api/users/${currentUser.id}`)
+          .then((res) => res.json())
+          .then((user) => {
+            currentUser = user;
+            localStorage.setItem("currentUser", JSON.stringify(user));
+            updateSidebar();
+          });
+      }
+
+      function updateSidebar() {
+        const profileName = document.querySelector(".user-mini-profile div p");
+        const profileAvatar = document.querySelector(
+          ".user-mini-profile .avatar"
+        );
+        const scoreText = document.querySelector(
+          ".user-mini-profile div p:nth-child(2)"
+        );
+
+        if (profileName)
+          profileName.innerText = currentUser.fullName || currentUser.username;
+        if (scoreText) scoreText.innerText = `Puan: ${currentUser.trustScore}`;
+
+        if (currentUser.profileImage && profileAvatar) {
+          profileAvatar.innerText = "";
+          profileAvatar.style.backgroundImage = `url(${currentUser.profileImage})`;
+        } else if (profileAvatar) {
+          profileAvatar.style.backgroundImage = "none";
+          profileAvatar.innerText = currentUser.username
+            .charAt(0)
+            .toUpperCase();
+        }
+      }
+
+      let myBooks = [];
+
+      function fetchMyBooks() {
+        fetch("http://localhost:3000/api/books")
+          .then((res) => res.json())
+          .then((data) => {
+            myBooks = data.filter(
+              (book) => book.owner === currentUser.username
+            );
+            updateStats();
+            renderMyBooks();
+          })
+          .catch((err) => console.error("Hata:", err));
+      }
+
+      function fetchIncomingRequests() {
+        fetch(
+          `http://localhost:3000/api/borrow/incoming?username=${currentUser.username}`
+        )
+          .then((res) => res.json())
+          .then((requests) => {
+            const activeRequests = requests.filter(
+              (r) => r.status === "PENDING" || r.status === "RETURN_REQUESTED"
+            );
+            requestCountEl.innerText = activeRequests.length;
+            renderRequests(activeRequests);
+          })
+          .catch((err) => console.error(err));
+      }
+
+      function renderRequests(requests) {
+        requestsPanel.innerHTML = "";
+        if (requests.length === 0) return;
+
+        const title = document.createElement("h4");
+        title.style.marginBottom = "10px";
+        title.style.color = "var(--primary)";
+        title.innerText = "Bekleyen İşlemler";
+        requestsPanel.appendChild(title);
+
+        requests.forEach((req) => {
+          const isReturn = req.status === "RETURN_REQUESTED";
+          const actionText = isReturn
+            ? "Kitabı iade etmek istiyor"
+            : `${req.requestedDays} günlüğüne istiyor`;
+          const btnText = isReturn ? "Teslim Al & Onayla" : "İsteği Onayla";
+          const btnAction = isReturn
+            ? `handleComplete(${req.id})`
+            : `handleApprove(${req.id})`;
+
+          const card = document.createElement("div");
+          card.className = "request-card";
+          card.innerHTML = `
+                    <div class="request-info">
+                        <div class="request-user-avatar" style="background-image: url('${
+                          req.requester.profileImage || ""
+                        }')">
+                            ${
+                              req.requester.profileImage
+                                ? ""
+                                : req.requester.username.charAt(0).toUpperCase()
+                            }
+                        </div>
+                        <div>
+                            <p><strong>${
+                              req.requester.fullName || req.requester.username
+                            }</strong>, "${
+            req.book.title
+          }" kitabını istiyor.</p>
+                            <p style="font-size: 0.85rem; color: #666;">${actionText}</p>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-accept" onclick="${btnAction}">${btnText}</button>
+                        ${
+                          !isReturn
+                            ? `<button class="btn-reject" onclick="handleReject(${req.id})">Reddet</button>`
+                            : ""
+                        }
+                    </div>
+                `;
+          requestsPanel.appendChild(card);
+        });
+      }
+
+      function handleApprove(id) {
+        fetch(`http://localhost:3000/api/borrow/${id}/approve`, {
+          method: "PUT",
+        }).then((res) => {
+          if (res.ok) {
+            showToast("İstek onaylandı! Kitap ödünç verildi.");
+            fetchIncomingRequests();
+            fetchMyBooks();
+          }
+        });
+      }
+
+      function handleComplete(id) {
+        fetch(`http://localhost:3000/api/borrow/${id}/complete`, {
+          method: "PUT",
+        }).then((res) => {
+          if (res.ok) {
+            showToast("İade onaylandı! Puanlar güncellendi.");
+            fetchIncomingRequests();
+            fetchMyBooks();
+          }
+        });
+      }
+
+      function handleReject(id) {
+        if (confirm("İsteği reddetmek istediğine emin misin?")) {
+          // Backend'de reject endpointi varsa buraya eklenir
+          // Şimdilik UI'dan kaldıralım
+          showToast("İstek reddedildi.");
+          document.getElementById("requestsPanel").innerHTML = "";
+          fetchIncomingRequests();
+        }
+      }
+
+      function updateStats() {
+        myTotalBooksEl.innerText = myBooks.length;
+        const borrowed = myBooks.filter((b) => b.status === "borrowed").length;
+        borrowedCountEl.innerText = borrowed;
+      }
+
+      function renderMyBooks(filterText = "") {
+        myBooksGrid.innerHTML = "";
+        const filtered = myBooks.filter((book) =>
+          book.title.toLowerCase().includes(filterText.toLowerCase())
+        );
+
+        if (filtered.length === 0) {
+          myBooksGrid.innerHTML =
+            "<p style='color:#888; grid-column:span 3; text-align:center;'>Listelenecek kitap yok.</p>";
+        }
+
+        filtered.forEach((book) => {
+          const isAvailable = book.status === "available";
+          const statusClass = isAvailable ? "available" : "borrowed";
+          const statusText = isAvailable ? "Mevcut" : `Ödünçte`;
+
+          const card = document.createElement("div");
+          card.className = "book-card";
+          card.innerHTML = `
+                    <div class="book-cover">
+                        <img src="${book.image}" alt="${book.title}" onerror="this.src='https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=400'">
+                    </div>
+                    <div class="card-body">
+                        <div class="book-title">${book.title}</div>
+                        <div class="book-author">${book.author}</div>
+                        <div class="card-footer">
+                            <span class="status ${statusClass}">${statusText}</span>
+                            <div class="admin-actions">
+                                <button class="btn-icon btn-delete" onclick="deleteBook(${book.id})" title="Sil"><i class="ri-delete-bin-line"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+          myBooksGrid.appendChild(card);
+        });
+      }
+
+      function deleteBook(id) {
+        if (
+          confirm(
+            "Bu kitabı kütüphaneden kalıcı olarak silmek istediğine emin misin?"
+          )
+        ) {
+          fetch(`http://localhost:3000/api/books/${id}`, {
+            method: "DELETE",
+          }).then((response) => {
+            if (response.ok) {
+              myBooks = myBooks.filter((b) => b.id !== id);
+              renderMyBooks();
+              updateStats();
+              showToast("Kitap silindi.");
+            }
+          });
+        }
+      }
+
+      function showToast(msg) {
+        const toastMsg = document.getElementById("toastMessage");
+        toastMsg.innerText = msg;
+        toast.classList.add("show");
+        setTimeout(() => {
+          toast.classList.remove("show");
+        }, 3000);
+      }
+
+      searchInput.addEventListener("keyup", (e) =>
+        renderMyBooks(e.target.value)
+      );
+    </script>
+  </body>
+</html>
