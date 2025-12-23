@@ -82,12 +82,16 @@ ALTER TABLE ONLY public.users
 -- --------------------------------------------------------
 -- 5. ÖRNEK VERİ YÜKLEMESİ
 -- --------------------------------------------------------
--- Not: Dosyanızdaki veri kısmı bozuk olduğu için, "COPY" komutu yerine
--- daha güvenli olan "INSERT" komutu ile kurtarılan ilk veriyi ekledim.
--- Resim verisi çok uzun olduğu için kısaltılmıştır, sisteminizde güncelleyebilirsiniz.
 
 INSERT INTO public.books (id, author, image, owner, status, title)
 VALUES (1, 'Michael Part', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...', 'mert61', 'available', 'Benim Adım Messi');
 
 -- İşlem tamamlandığında otomatik olarak ID sayacını günceller
 SELECT setval('public.books_id_seq', (SELECT MAX(id) FROM public.books));
+
+SELECT pg_catalog.setval('public.books_id_seq', 3, true);
+
+SELECT pg_catalog.setval('public.users_id_seq', 2, true);
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT ukr43af9ap4edm43mmtq01oddj6 UNIQUE (username);
